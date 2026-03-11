@@ -1,17 +1,23 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
+import { handleProjects } from './routes/projects.js';
+import { handleComponents } from './routes/components.js';
+import { handleContributors } from './routes/contributors.js';
 
 export default {
 	async fetch(request, env) {
-		const result = await env.DB.prepare('SELECT * FROM users').all();
+		const url = new URL(request.url);
 
-		return Response.json(result.results);
+		if (url.pathname.startsWith('/projects')) {
+			return handleProjects(request, env);
+		}
+
+		if (url.pathname.startsWith('/components')) {
+			return handleComponents(request, env);
+		}
+
+		if (url.pathname.startsWith('/contributors')) {
+			return handleContributors(request, env);
+		}
+
+		return new Response('Not found', { status: 404 });
 	},
 };
