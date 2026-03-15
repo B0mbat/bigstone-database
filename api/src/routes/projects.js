@@ -1,4 +1,4 @@
-export async function handleProjects(request, env) {
+export async function handleProjects(request, env, corsHeaders) {
 	const url = new URL(request.url);
 	const path = url.pathname.replace(/\/$/, ''); // I have no idea how this works, i just found this
 
@@ -10,14 +10,14 @@ export async function handleProjects(request, env) {
 
 		console.log(JSON.stringify(result));
 
-		return new Response(JSON.stringify(result.results), { headers: { 'Content-Type': 'application/json' } });
+		return new Response(JSON.stringify(result.results), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
 	}
 
 	/* GET methods */
 	if (request.method === 'GET' && path === '/projects') {
 		const result = await env.DB.prepare('SELECT * FROM projects').all();
 
-		return new Response(JSON.stringify(result.results), { headers: { 'Content-Type': 'application/json' } });
+		return new Response(JSON.stringify(result.results), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
 	}
 
 	if (request.method === 'GET' && path.startsWith('/projects/')) {
@@ -25,6 +25,6 @@ export async function handleProjects(request, env) {
 
 		const result = await env.DB.prepare('SELECT * FROM projects WHERE id = ?').bind(id).first();
 
-		return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json' } });
+		return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
 	}
 }
