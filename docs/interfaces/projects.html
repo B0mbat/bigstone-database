@@ -37,11 +37,10 @@
 
                     const data = await res.json();
 
-                    document.getElementById("output").textContent =
-                        "Full Response:\n" +
-                        JSON.stringify(data, null, 2) +
-                        "\n\nID: " +
-                        data.id;
+                    const output = document.getElementById("output");
+                    output.textContent = await fetch(
+                        `https://bigstone-api.justparrot.workers.dev/projects/${data.id}`,
+                    );
                 } catch (err) {
                     document.getElementById("output").textContent =
                         "Error: " + err;
