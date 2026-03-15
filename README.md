@@ -8,8 +8,9 @@
 We use Cloudlfare Workers to deploy our API. The url is ```https://bigstone-api.justparrot.workers.dev```.
 
 <u>THE API ONLY ACCEPTS REQUESTS FROM OUR WEBSITE, OR `localhost:8787`</u>
-### Projects (/projects/)
-**POST** Create Project with (name, desc)
+## Projects (/projects/)
+**POST** 
+- Create project with (name, desc)
 ```
 fetch('https://bigstone-api.justparrot.workers.dev', {
   method: 'POST',
