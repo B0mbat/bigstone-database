@@ -21,7 +21,14 @@
     "name": "List Project by ID",
     "method": "GET",
     "path": "/projects/{ID}",
-    "description": "Get project data by ID",
+    "description": "Get all project data by ID",
     "example": "fetch('https://bigstone-api.justparrot.workers.dev/projects/1/')\n.then(res => res.json());"
+  },
+  {
+    "name": "Remove Project by ID",
+    "method": "DELETE",
+    "path": "/projects/remove/{ID}",
+    "description": "Removes project via ID",
+    "example": "fetch('http://localhost:8787/projects/remove/3', {\n  method: 'DELETE',\n  headers: { 'Content-Type': 'application/json' }\n})\n.then(res => res.json())"
   }
 ]
