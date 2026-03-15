@@ -1,26 +1,40 @@
-## Cotributors:
-### @_justParrot
-### @bobmat2011
-### @guigui0246
+## Contributors
+- @_justParrot  
+- @bobmat2011  
+- @guigui0246  
+
 ---
 
-## API Endpoints:
-We use Cloudlfare Workers to deploy our API. The url is ```https://bigstone-api.justparrot.workers.dev```.
+## API Overview
+Our API is deployed via Cloudflare Workers:  
+`https://bigstone-api.justparrot.workers.dev`
 
-<u>THE API ONLY ACCEPTS REQUESTS FROM OUR WEBSITE, OR `localhost:8787`</u>
-## Projects (/projects/)
-**POST** 
-- Create project with (name, desc)
+> **Note:** The API only accepts requests from our website or `localhost:8787`.
+
+---
+
+## Projects Endpoint: `/projects/`
+
+### Create a Project (POST)
+**Request Body:**  
+```json
+{
+  "name": "PROJECT NAME",
+  "desc": "DESCRIPTION"
+}
 ```
-fetch('https://bigstone-api.justparrot.workers.dev', {
+
+**Example Fetch Request:**
+```javascript
+fetch('https://bigstone-api.justparrot.workers.dev/projects/', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name: 'PROJECT NAME', desc: 'DESCRIPTION' })
+  body: JSON.stringify({ name: 'My Project', desc: 'Project description' })
 })
-.then(res => res.json())
-.then(data => {
-  console.log("Full Response Data:", data);
-  console.log("ID:", data.id);
-})
-.catch(err => console.error("Fetch error:", err));
+  .then(res => res.json())
+  .then(data => {
+    console.log("Full Response:", data);
+    console.log("Project ID:", data.id);
+  })
+  .catch(err => console.error("Error:", err));
 ```
