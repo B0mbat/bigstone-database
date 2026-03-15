@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Create Project",
+    "method": "POST",
+    "path": "/projects/",
+    "description": "Create a new project with name and description.",
+    "body": {
+      "name": "PROJECT NAME",
+      "desc": "DESCRIPTION"
+    },
+    "example": "fetch('https://bigstone-api.justparrot.workers.dev/projects/', {\n  method: 'POST',\n  headers: { 'Content-Type': 'application/json' },\n  body: JSON.stringify({ name: 'My Project', desc: 'Project description' })\n})\n.then(res => res.json())\n.then(data => console.log(data))\n.catch(err => console.error(err));"
+  },
+  {
+    "name": "List Projects",
+    "method": "GET",
+    "path": "/projects/",
+    "description": "Get a list of all projects.",
+    "example": "fetch('https://bigstone-api.justparrot.workers.dev/projects/')\n.then(res => res.json());"
+  },
+  {
+    "name": "List Project by ID",
+    "method": "GET",
+    "path": "/projects/{ID}",
+    "description": "Get project data by ID",
+    "example": "fetch('https://bigstone-api.justparrot.workers.dev/projects/1/')\n.then(res => res.json());"
+  }
+]

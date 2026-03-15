@@ -116,7 +116,7 @@
 
         <script>
             async function loadEndpoints() {
-                const res = await fetch("endpoints.json");
+                const res = await fetch("endpoints.json?v=" + Date.now());
                 const endpoints = await res.json();
 
                 const sidebar = document.getElementById("sidebar-links");
@@ -143,22 +143,14 @@
                         ? JSON.stringify(ep.body, null, 2)
                         : "";
                     section.innerHTML = `
-          <h2>${ep.name} <span class="method">[${ep.method}]</span></h2>
-          <p>${ep.description}</p>
-          ${bodyCode ? `<h4>Request Body</h4><pre>${bodyCode}</pre>` : ""}
-          <h4>Fetch</h4>
-          <pre id="example-${index}">${ep.example}</pre>
-        `;
+              <h2>${ep.name} <span class="method">[${ep.method}]</span></h2>
+              <p><code>${ep.path}</code></p>
+              <p>${ep.description}</p>
+              ${bodyCode ? `<h4>Request Body</h4><pre>${bodyCode}</pre>` : ""}
+              <h4>Fetch</h4>
+              <pre id="example-${index}">${ep.example}</pre>
+            `;
                     content.appendChild(section);
-                });
-            }
-
-            function copyExample(index) {
-                const exampleText = document.getElementById(
-                    `example-${index}`,
-                ).innerText;
-                navigator.clipboard.writeText(exampleText).then(() => {
-                    alert("Copied to clipboard!");
                 });
             }
 
