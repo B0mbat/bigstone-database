@@ -40,14 +40,12 @@
 
              @keyframes glow {
                0% {
-                color: #fff;
-                text-shadow: 0 0 20px #00e5ff;
-                transform: scale(1.1);
+                
             }
              5% {
                 color: #fff;
                 text-shadow: 0 0 20px #00e5ff;
-                transform: scale(1.1);
+                transform: scale(1.05);
             }
                 100% {
                 color: #00b3c6;
@@ -58,6 +56,8 @@
 
             .endpoint h2.highlight {
                 animation: glow 1.5s ease-out;
+                animation-delay: 0.3s;
+                animation-fill-mode: backwards;
             }
 
             .endpoint h2 {
