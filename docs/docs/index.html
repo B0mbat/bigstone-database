@@ -38,6 +38,28 @@
                 color: #004852;
             }
 
+             @keyframes glow {
+               0% {
+                color: #fff;
+                text-shadow: 0 0 20px #00e5ff;
+                transform: scale(1.05);
+            }
+                100% {
+                color: #00b3c6;
+                text-shadow: none;
+                transform: scale(1);
+               }
+            }
+
+            .endpoint h2.highlight {
+                animation: glow 1.5s ease-out;
+            }
+
+            .endpoint h2 {
+            transition: all 0.3s ease;
+            display: inline-block;
+            transform-origin: left;
+            }
             .sidebar-header {
                 display: flex;
                 align-items: center;
@@ -153,9 +175,15 @@
                     link.className = "endpoint-link";
                     link.innerText = `${ep.method} ${ep.path}`;
                     link.onclick = () => {
+                        document.querySelectorAll(".endpoint h2").forEach(h2 => h2.classList.remove("highlight"));
+                        const targetSection = document.getElementById("ep-" + index);
+                        const targetTitle = targetSection.querySelector("h2");
                         document
                             .getElementById("ep-" + index)
                             .scrollIntoView({ behavior: "smooth" });
+                        targetTitle.classList.remove("highlight");
+                        void targetTitle.offsetWidth;
+                        targetTitle.classList.add("highlight");
                     };
                     sidebar.appendChild(link);
 
@@ -168,7 +196,7 @@
                         ? JSON.stringify(ep.body, null, 2)
                         : "";
                     section.innerHTML = `
-              <h2>${ep.name} <span class="method">[${ep.method}]</span></h2>
+              <h2 style="display: inline-block;">${ep.name} <span class="method">[${ep.method}]</span></h2>
               <p><code>${ep.path}</code></p>
               <p>${ep.description}</p>
               ${bodyCode ? `<h4>Request Body</h4><pre>${bodyCode}</pre>` : ""}
