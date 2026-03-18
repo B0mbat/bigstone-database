@@ -2,8 +2,11 @@
 
 //this is vibe-coded, only this bit, as i have no current good understanding of JWT
 export async function createToken(payload, secret) {
+	const exp = Math.floor(Date.now() / 1000) + 60 * 60;
+	const bodyPayload = { ...payload, exp };
+
 	const header = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
-	const body = btoa(JSON.stringify(payload));
+	const body = btoa(JSON.stringify(bodyPayload));
 
 	const signature = await crypto.subtle.sign(
 		{ name: 'HMAC', hash: 'SHA-256' },
@@ -26,10 +29,15 @@ export async function verifyToken(token, secret) {
 	);
 
 	const expected = btoa(String.fromCharCode(...new Uint8Array(validSig)));
-
 	if (sig !== expected) throw new Error('Invalid token');
 
-	return JSON.parse(atob(body));
+	const payload = JSON.parse(atob(body));
+
+	// Check expiration
+	const now = Math.floor(Date.now() / 1000);
+	if (payload.exp && now > payload.exp) throw new Error('Token expired');
+
+	return payload;
 }
 
 async function getKey(secret) {
