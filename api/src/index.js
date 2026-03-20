@@ -1,8 +1,9 @@
 import { handleProjects } from './routes/projects.js';
 import { handleAuth } from './routes/auth.js';
 import { handleUsers } from './routes/users.js';
-/*
 import { handleComponents } from './routes/components.js';
+
+/*
 import { handleContributors } from './routes/contributors.js';
 */
 
@@ -19,6 +20,7 @@ export default {
 		const corsHeaders = {
 			'Access-Control-Allow-Origin': origin,
 			'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+			'Access-Control-Allow-Credentials': true,
 			'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 		};
 
@@ -44,10 +46,11 @@ export default {
 			return handleUsers(request, env, corsHeaders);
 		}
 
-		/*
 		if (url.pathname.startsWith('/components')) {
 			return handleComponents(request, env, corsHeaders);
 		}
+
+		/*
 
 		if (url.pathname.startsWith('/contributors')) {
 			return handleContributors(request, env, corsHeaders);
