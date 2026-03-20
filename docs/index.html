@@ -477,7 +477,7 @@
                 });
             }
 
-            function openModal(
+            async function openModal(
                 title,
                 description,
                 ownerId,
@@ -486,16 +486,34 @@
             ) {
                 document.querySelector("#m-title").textContent = title;
                 document.querySelector("#m-desc").textContent = description;
+
                 const modalImg = document.querySelector("#m-img");
                 modalImg.src = imageUrl;
                 modalImg.onerror = function () {
                     this.onerror = null;
                     this.src = fallbackGif;
                 };
+
                 document.querySelector("#m-download").href = downloadLink;
 
                 const tagsContainer = document.querySelector("#m-tags");
-                tagsContainer.innerHTML = `<span class="tag">${ownerId}</span>`;
+
+                // temp. placeholder
+                tagsContainer.innerHTML = `<span class="tag">Loading...</span>`;
+
+                try {
+                    const res = await fetch(
+                        `https://bigstone-api.justparrot.workers.dev/users/${ownerId}`,
+                    );
+                    const user = await res.json();
+
+                    tagsContainer.innerHTML = `
+                        <span class="tag">${user.username}</span>
+                    `;
+                } catch (err) {
+                    tagsContainer.innerHTML = `<span class="tag">Unknown</span>`;
+                    console.error(err);
+                }
 
                 UIkit.modal(document.querySelector("#compModal")).show();
             }
