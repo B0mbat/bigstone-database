@@ -2,10 +2,7 @@ import { handleProjects } from './routes/projects.js';
 import { handleAuth } from './routes/auth.js';
 import { handleUsers } from './routes/users.js';
 import { handleComponents } from './routes/components.js';
-
-/*
 import { handleContributors } from './routes/contributors.js';
-*/
 
 export default {
 	async fetch(request, env) {
@@ -49,15 +46,9 @@ export default {
 			return handleComponents(request, env, corsHeaders);
 		}
 
-		/*
-		if (url.pathname.startsWith('/components')) {
-			return handleComponents(request, env, corsHeaders);
-		}
-
 		if (url.pathname.startsWith('/contributors')) {
 			return handleContributors(request, env, corsHeaders);
 		}
-		*/
 
 		return new Response('Not found', { status: 404 });
 	},

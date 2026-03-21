@@ -8,7 +8,7 @@ export async function handleProjects(request, env, corsHeaders) {
 	if (request.method === 'POST' && path === '/projects') {
 		const user = await requireAuth(request, env.JWT_SECRET);
 
-		const { name, desc } = await request.json();
+		cons.t { name, desc } = await request.json();
 
 		const result = await env.DB.prepare('INSERT INTO projects (name, desc, owner_id) VALUES (?, ?, ?)').bind(name, desc, user.id).run();
 
@@ -28,8 +28,6 @@ export async function handleProjects(request, env, corsHeaders) {
 
 	if (request.method === 'GET' && path.startsWith('/projects/')) {
 		const parts = path.split('/').filter(Boolean);
-		// projects/<ID> or projects/<ID>/components
-
 		const id = parts[1];
 
 		// /projects/<ID>
@@ -46,6 +44,24 @@ export async function handleProjects(request, env, corsHeaders) {
 			const components = await env.DB.prepare('SELECT * FROM components WHERE project_id = ?').bind(id).all();
 
 			return new Response(JSON.stringify(components.results), {
+				headers: { 'Content-Type': 'application/json', ...corsHeaders },
+			});
+		}
+
+		// /projects/<ID>/contributors
+		if (parts.length === 3 && parts[2] === 'contributors') {
+			const contributors = await env.DB.prepare(
+				`
+            SELECT c.user_id, u.username
+            FROM contributors c
+            JOIN users u ON u.id = c.user_id
+            WHERE c.project_id = ?
+        `,
+			)
+				.bind(id)
+				.all();
+
+			return new Response(JSON.stringify(contributors.results), {
 				headers: { 'Content-Type': 'application/json', ...corsHeaders },
 			});
 		}

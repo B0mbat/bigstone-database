@@ -13,7 +13,18 @@
                 margin: 5px;
             }
             li {
-                margin-bottom: 5px;
+                margin-bottom: 15px;
+            }
+            .contributors {
+                margin-left: 20px;
+                list-style: disc;
+            }
+            .contributor {
+                display: flex;
+                align-items: center;
+            }
+            .contributor button {
+                margin-left: 5px;
             }
         </style>
     </head>
@@ -34,7 +45,7 @@
         <h3>Delete Project by ID</h3>
         <form id="deleteForm">
             <input
-                type="string"
+                type="text"
                 id="deleteId"
                 placeholder="Project ID"
                 required
@@ -44,28 +55,96 @@
 
         <h3>All Projects</h3>
         <ul id="projectList"></ul>
-
         <p id="message"></p>
 
         <script>
-            const API_URL = "https://bigstone-api.justparrot.workers.dev";
+            const API_URL = "http://localhost:7000";
             const token = localStorage.getItem("token");
             const projectList = document.getElementById("projectList");
-            const message = document.getElementById("message");
 
             async function fetchProjects() {
                 projectList.innerHTML = "";
-                const res = await fetch(`${API_URL}/projects`);
+                const res = await fetch(`${API_URL}/projects`, {
+                    headers: { Authorization: "Bearer " + token },
+                });
                 const projects = await res.json();
 
-                projects.forEach((p) => {
+                for (const p of projects) {
                     const li = document.createElement("li");
-                    li.textContent = `ID: ${p.id} | Name: ${p.name} | Desc: ${p.desc} | Owner: ${p.owner_id}`;
+                    li.innerHTML = `<strong>${p.name}</strong> (ID: ${p.id})<br>${p.desc}<br>Owner: ${p.owner_id}`;
+
+                    // --- Contributors list ---
+                    const contribList = document.createElement("ul");
+                    contribList.className = "contributors";
+                    li.appendChild(contribList);
+
+                    // Fetch contributors using /projects/<id>/contributors
+                    const cRes = await fetch(
+                        `${API_URL}/projects/${p.id}/contributors`,
+                        {
+                            headers: { Authorization: "Bearer " + token },
+                        },
+                    );
+                    const contributors = await cRes.json();
+
+                    contributors.forEach((c) => {
+                        const cLi = document.createElement("li");
+                        cLi.className = "contributor";
+                        cLi.textContent = c.username;
+
+                        const removeBtn = document.createElement("button");
+                        removeBtn.textContent = "Remove";
+                        removeBtn.addEventListener("click", async () => {
+                            // DELETE contributor by username
+                            await fetch(`${API_URL}/contributors`, {
+                                method: "DELETE",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: "Bearer " + token,
+                                },
+                                body: JSON.stringify({
+                                    project_id: p.id,
+                                    username: c.username,
+                                }),
+                            });
+                            fetchProjects();
+                        });
+
+                        cLi.appendChild(removeBtn);
+                        contribList.appendChild(cLi);
+                    });
+
+                    // --- Form to add contributor ---
+                    const addForm = document.createElement("form");
+                    addForm.innerHTML = `
+            <input type="text" name="username" placeholder="Username to add" required />
+            <button type="submit">Add Contributor</button>
+        `;
+                    addForm.addEventListener("submit", async (e) => {
+                        e.preventDefault();
+                        const username = e.target.username.value;
+
+                        await fetch(`${API_URL}/contributors`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: "Bearer " + token,
+                            },
+                            body: JSON.stringify({
+                                project_id: p.id,
+                                username,
+                            }),
+                        });
+
+                        fetchProjects();
+                    });
+
+                    li.appendChild(addForm);
                     projectList.appendChild(li);
-                });
+                }
             }
 
-            // Create project
+            // --- Create project ---
             document
                 .getElementById("createForm")
                 .addEventListener("submit", async (e) => {
@@ -73,57 +152,34 @@
                     const name = document.getElementById("name").value;
                     const desc = document.getElementById("desc").value;
 
-                    try {
-                        const res = await fetch(`${API_URL}/projects`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: "Bearer " + token,
-                            },
-                            body: JSON.stringify({ name, desc }),
-                        });
+                    await fetch(`${API_URL}/projects`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: "Bearer " + token,
+                        },
+                        body: JSON.stringify({ name, desc }),
+                    });
 
-                        if (res.ok) {
-                            const data = await res.json();
-                            message.textContent = `Project created with ID: ${data.id}`;
-                            fetchProjects();
-                        } else {
-                            const text = await res.text();
-                            message.textContent = "Error: " + text;
-                        }
-                    } catch (err) {
-                        message.textContent = "Network error";
-                    }
+                    fetchProjects();
                 });
 
-            // Delete project
+            // --- Delete project ---
             document
                 .getElementById("deleteForm")
                 .addEventListener("submit", async (e) => {
                     e.preventDefault();
                     const id = document.getElementById("deleteId").value;
 
-                    try {
-                        const res = await fetch(`${API_URL}/projects/${id}`, {
-                            method: "DELETE",
-                            headers: { Authorization: "Bearer " + token },
-                        });
+                    await fetch(`${API_URL}/projects/${id}`, {
+                        method: "DELETE",
+                        headers: { Authorization: "Bearer " + token },
+                    });
 
-                        if (res.ok) {
-                            const data = await res.json();
-                            message.textContent =
-                                data.string || "Deleted successfully";
-                            fetchProjects();
-                        } else {
-                            const text = await res.text();
-                            message.textContent = "Error: " + text;
-                        }
-                    } catch (err) {
-                        message.textContent = "Network error";
-                    }
+                    fetchProjects();
                 });
 
-            // initial fetch
+            // Initial load
             fetchProjects();
         </script>
     </body>
