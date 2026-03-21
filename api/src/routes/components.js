@@ -53,8 +53,8 @@ export async function handleComponents(request, env, corsHeaders) {
 			}
 
 			// Insert new component
-			const result = await env.DB.prepare('INSERT INTO components (project_id, name, "desc") VALUES (?, ?, ?)')
-				.bind(project_id, name, desc || null)
+			const result = await env.DB.prepare('INSERT INTO components (project_id, name, "desc", owner_id) VALUES (?, ?, ?, ?)')
+				.bind(project_id, name, desc || null, user.id)
 				.run();
 
 			const row = await env.DB.prepare('SELECT id FROM components WHERE rowid = ?').bind(result.meta.last_row_id).first();
