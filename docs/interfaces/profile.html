@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>User Profile</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+                background: #f7f7f7;
+            }
+            .profile {
+                background: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                max-width: 400px;
+                margin: auto;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            .profile h2 {
+                margin-top: 0;
+            }
+            .profile div {
+                margin-bottom: 8px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="profile" id="profile">
+            <h2>User Profile</h2>
+            <div><strong>ID:</strong> <span id="userId"></span></div>
+            <div><strong>Username:</strong> <span id="username"></span></div>
+            <div><strong>Created:</strong> <span id="createdAt"></span></div>
+            <div>
+                <strong>Components Created:</strong>
+                <span id="cmpntCreations"></span>
+            </div>
+        </div>
+
+        <script>
+            async function loadProfile() {
+                const token = localStorage.getItem("token"); // your JWT
+                if (!token) {
+                    alert("No token found. Log in first.");
+                    return;
+                }
+
+                try {
+                    const res = await fetch(
+                        "https://bigstone-api.justparrot.workers.dev/users/me",
+                        {
+                            headers: { Authorization: "Bearer " + token },
+                        },
+                    );
+
+                    if (!res.ok) throw new Error("Failed to fetch user");
+
+                    const data = await res.json();
+                    if (!data) {
+                        alert("No user data returned");
+                        return;
+                    }
+
+                    document.getElementById("userId").textContent =
+                        data.id || "N/A";
+                    document.getElementById("username").textContent =
+                        data.username || "N/A";
+                    document.getElementById("createdAt").textContent =
+                        new Date(data.created_at).toLocaleString() || "N/A";
+                    document.getElementById("cmpntCreations").textContent =
+                        data.cmpnt_creations ?? 0;
+                } catch (err) {
+                    console.error(err);
+                    alert("Error loading profile: " + err.message);
+                }
+            }
+
+            loadProfile();
+        </script>
+    </body>
+</html>
