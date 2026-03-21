@@ -27,11 +27,28 @@ export async function handleProjects(request, env, corsHeaders) {
 	}
 
 	if (request.method === 'GET' && path.startsWith('/projects/')) {
-		const id = path.split('/').pop();
+		const parts = path.split('/').filter(Boolean);
+		// projects/<ID> or projects/<ID>/components
 
-		const result = await env.DB.prepare('SELECT * FROM projects WHERE id = ?').bind(id).first();
+		const id = parts[1];
 
-		return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+		// /projects/<ID>
+		if (parts.length === 2) {
+			const project = await env.DB.prepare('SELECT * FROM projects WHERE id = ?').bind(id).first();
+
+			return new Response(JSON.stringify(project), {
+				headers: { 'Content-Type': 'application/json', ...corsHeaders },
+			});
+		}
+
+		// /projects/<ID>/components
+		if (parts.length === 3 && parts[2] === 'components') {
+			const components = await env.DB.prepare('SELECT * FROM components WHERE project_id = ?').bind(id).all();
+
+			return new Response(JSON.stringify(components.results), {
+				headers: { 'Content-Type': 'application/json', ...corsHeaders },
+			});
+		}
 	}
 
 	/* DELETE methods */

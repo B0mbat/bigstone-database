@@ -25,6 +25,13 @@
     "example": "fetch('https://bigstone-api.justparrot.workers.dev/projects/1/')\n.then(res => res.json());"
   },
   {
+    "name": "List Components by Project ID",
+    "method": "GET",
+    "path": "/projects/{ID}/components",
+    "description": "Get all components that belong to a project by using the project ID",
+    "example": "fetch('https://bigstone-api.justparrot.workers.dev/projects/1/components')\n.then(res => res.json());"
+  },
+  {
     "name": "Remove Project by ID",
     "method": "DELETE",
     "path": "/projects/remove/{ID}",
