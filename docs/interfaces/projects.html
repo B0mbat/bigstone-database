@@ -95,17 +95,16 @@
                         const removeBtn = document.createElement("button");
                         removeBtn.textContent = "Remove";
                         removeBtn.addEventListener("click", async () => {
-                            // DELETE contributor by username
+                            // DELETE contributor using project_id and user_id
                             await fetch(
-                                `${API_URL}/contributors/${p.id}/${c.id}`,
+                                `${API_URL}/contributors/${p.id}/${c.user_id}`,
                                 {
                                     method: "DELETE",
-                                    headers: { Authorization: "Bearer " },
+                                    headers: {
+                                        Authorization: "Bearer " + token,
+                                    },
                                 },
-                            )
-                                .then((res) => res.text())
-                                .then((data) => console.log(data))
-                                .catch((err) => console.error(err));
+                            );
                             fetchProjects();
                         });
 
