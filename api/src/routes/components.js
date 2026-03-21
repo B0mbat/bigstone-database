@@ -71,6 +71,21 @@ export async function handleComponents(request, env, corsHeaders) {
 		}
 	}
 
+	// GET
+	if (request.method === 'GET') {
+		const result = await env.DB.prepare('SELECT * FROM components').all();
+
+		return new Response(JSON.stringify(result.results), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+	}
+
+	if (request.method === 'GET' && path.startsWith('/components/')) {
+		const id = path.split('/').pop();
+
+		const result = await env.DB.prepare('SELECT * FROM components WHERE id = ?').bind(id).first();
+
+		return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+	}
+
 	// unsupported routes
 	return new Response('Not found', { status: 404, headers: corsHeaders });
 }
