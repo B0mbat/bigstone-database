@@ -8,7 +8,11 @@ export async function handleAuth(request, env, corsHeaders) {
 	const path = url.pathname;
 
 	if (request.method === 'POST' && path === '/auth/register') {
-		const { username, password } = await request.json();
+		const { username, password, consent } = await request.json();
+
+		if (!consent) {
+			return res.status(400).json({ error: 'You must accept the privacy policy.' });
+		}
 
 		const hashed = await hashPassword(password);
 

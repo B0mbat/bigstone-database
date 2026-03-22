@@ -24,6 +24,24 @@
             .profile div {
                 margin-bottom: 8px;
             }
+            button {
+                margin-top: 10px;
+                padding: 8px 12px;
+                border-radius: 5px;
+                border: none;
+                cursor: pointer;
+            }
+            button:hover {
+                opacity: 0.9;
+            }
+            .export {
+                background-color: #4caf50;
+                color: white;
+            }
+            .delete {
+                background-color: #f44336;
+                color: white;
+            }
         </style>
     </head>
     <body>
@@ -36,31 +54,28 @@
                 <strong>Components Created:</strong>
                 <span id="cmpntCreations"></span>
             </div>
+
+            <button class="export" id="exportBtn">Export Data</button>
+            <button class="delete" id="deleteBtn">Delete Account</button>
         </div>
 
         <script>
+            const api_url = "http://localhost:7000"; // <-- configurable API base URL
+
             async function loadProfile() {
-                const token = localStorage.getItem("token"); // your JWT
+                const token = localStorage.getItem("token");
                 if (!token) {
                     alert("No token found. Log in first.");
                     return;
                 }
 
                 try {
-                    const res = await fetch(
-                        "https://bigstone-api.justparrot.workers.dev/users/me",
-                        {
-                            headers: { Authorization: "Bearer " + token },
-                        },
-                    );
+                    const res = await fetch(`${api_url}/users/me`, {
+                        headers: { Authorization: "Bearer " + token },
+                    });
 
                     if (!res.ok) throw new Error("Failed to fetch user");
-
                     const data = await res.json();
-                    if (!data) {
-                        alert("No user data returned");
-                        return;
-                    }
 
                     document.getElementById("userId").textContent =
                         data.id || "N/A";
@@ -75,6 +90,66 @@
                     alert("Error loading profile: " + err.message);
                 }
             }
+
+            // Export button
+            document
+                .getElementById("exportBtn")
+                .addEventListener("click", async () => {
+                    const token = localStorage.getItem("token");
+                    if (!token) return;
+
+                    try {
+                        const res = await fetch(`${api_url}/users/me/export`, {
+                            headers: { Authorization: "Bearer " + token },
+                        });
+                        if (!res.ok) throw new Error("Failed to fetch export");
+
+                        const data = await res.json();
+                        const blob = new Blob([JSON.stringify(data, null, 2)], {
+                            type: "application/json",
+                        });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "user_export.json";
+                        a.click();
+                        URL.revokeObjectURL(url);
+                    } catch (err) {
+                        console.error(err);
+                        alert("Error exporting data: " + err.message);
+                    }
+                });
+
+            // Delete button
+            document
+                .getElementById("deleteBtn")
+                .addEventListener("click", async () => {
+                    if (
+                        !confirm(
+                            "Are you sure you want to delete your account? This action is permanent.",
+                        )
+                    )
+                        return;
+
+                    const token = localStorage.getItem("token");
+                    if (!token) return;
+
+                    try {
+                        const res = await fetch(`${api_url}/users/me`, {
+                            method: "DELETE",
+                            headers: { Authorization: "Bearer " + token },
+                        });
+                        if (!res.ok)
+                            throw new Error("Failed to delete account");
+
+                        alert("Account deleted successfully");
+                        localStorage.removeItem("token");
+                        location.reload();
+                    } catch (err) {
+                        console.error(err);
+                        alert("Error deleting account: " + err.message);
+                    }
+                });
 
             loadProfile();
         </script>
