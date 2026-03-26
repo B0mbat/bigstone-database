@@ -17,7 +17,6 @@ CREATE TABLE projects (
   owner_id TEXT NOT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   banner_url TEXT,
-  downloads INTEGER DEFAULT 0,
 
   FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 );
