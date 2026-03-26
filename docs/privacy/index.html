@@ -5,6 +5,7 @@
     <head>
         <meta charset="UTF-8" />
         <title>Privacy Policy</title>
+<<<<<<< HEAD:docs/privacy/index.html
         <link rel="stylesheet" href="../assets/css/styles.css" />
 
         <style>
@@ -73,71 +74,49 @@
                 margin-left: 2px;
             }
         </style>
+=======
+>>>>>>> parent of edcd18e (*):docs/privacy.html
     </head>
     <body>
-        <header>
-            <h1>Privacy Policy</h1>
-        </header>
+        <h1>Privacy Policy</h1>
+        <p>This project stores the following personal data:</p>
+        <ul>
+            <li>Username</li>
+            <li>Password hash (bcrypt, never stored in plain text)</li>
+            <li>Your projects and components tied to your account</li>
+        </ul>
 
-        <main class="policy-container">
-            <section class="card policy">
-                <p>This project stores the following personal data:</p>
-                <ul>
-                    <li>Username</li>
-                    <li>Password hash (bcrypt, never stored in plain text)</li>
-                    <li>Your projects and components tied to your account</li>
-                </ul>
+        <p>
+            Purpose: We use this data only to provide account access and
+            project/component functionality.
+        </p>
 
-                <h3>Purpose</h3>
-                <p>
-                    We use this data only to provide account access and
-                    project/component functionality.
-                </p>
+        <p>
+            Data retention: Your data is kept until you choose to delete your
+            account. Once deleted, all associated data is permanently removed.
+        </p>
 
-                <h3>Data Retention</h3>
-                <p>
-                    Your data is kept until you delete your account. Once
-                    deleted, all associated data<sup>*</sup>
-                    is permanently removed.
-                </p>
+        <p>Your rights:</p>
+        <ul>
+            <li>
+                You can request a copy of all your personal data via
+                <code>GET /users/me/export</code>.
+            </li>
+            <li>
+                You can delete your account and all associated data via
+                <code>DELETE /users/me</code>.
+            </li>
+        </ul>
 
-                <h3>Your Rights</h3>
-                <ul>
-                    <li>
-                        Export your data via <code>GET /users/me/export</code>
-                    </li>
-                    <li>
-                        Delete your account via <code>DELETE /users/me</code>
-                    </li>
-                    <li>
-                        Upload files via
-                        <a href="https://forms.gle/jnYv3NyS4nzvr7dC9"
-                            >this form</a
-                        >
-                        and contact <code>_justParrot</code> on Discord
-                    </li>
-                </ul>
+        <p>
+            Third parties: We use GitHub Pages to host the frontend and
+            Cloudflare D1 to store the database. They act as processors; we
+            remain responsible for compliance.
+        </p>
 
-                <h3>Third Parties</h3>
-                <p>
-                    We use GitHub Pages (frontend) and Cloudflare D1 & Workers
-                    (database & backend). They act as processors.
-                </p>
-
-                <h3>Contact</h3>
-                <p>
-                    DM <code>_justParrot</code> on Discord for data-related
-                    questions.
-                </p>
-            </section>
-        </main>
-
-        <p class="footnote">
-            * “Associated data” does not include files. You will get reminded
-            about that when you delete your account. Please, contact _justParrot
-            to remove all associated files, but YOU have to keep the project_id
-            / component_id to get the data removed easily. To get the data, you
-            can export all your account data through our web portal.
+        <p>
+            Contact: For questions regarding your data, please reach out via
+            DM-ing `_justParrot` on <i><strong>discord.</strong></i>
         </p>
     </body>
 </html>
