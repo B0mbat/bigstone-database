@@ -89,7 +89,13 @@
             .consent {
                 font-size: 13px;
                 color: #aaa;
+                display: inline-flex; /* only as wide as content */
+                align-items: flex-start; /* aligns checkbox with text top */
+                gap: 6px; /* space between checkbox and text */
+                line-height: 1.2; /* tidy line spacing */
+                max-width: 90%; /* optional, to prevent overflow in modal */
             }
+
             .consent a {
                 color: #008680;
             }
@@ -128,7 +134,6 @@
 
         <div class="grid" id="grid"></div>
 
-        <!-- Component Modal -->
         <div id="compModal" uk-modal>
             <div class="uk-modal-dialog custom-modal-dialog">
                 <button
@@ -157,7 +162,6 @@
             </div>
         </div>
 
-        <!-- LOGIN MODAL -->
         <div id="loginModal" uk-modal>
             <div class="uk-modal-dialog custom-modal-dialog">
                 <button
@@ -195,7 +199,6 @@
             </div>
         </div>
 
-        <!-- REGISTER MODAL -->
         <div id="registerModal" uk-modal>
             <div class="uk-modal-dialog custom-modal-dialog">
                 <button
