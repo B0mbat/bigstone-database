@@ -449,6 +449,8 @@
                 projectsData.forEach(function (project) {
                     const card = document.createElement("div");
                     card.className = "card uk-card uk-card-default";
+                    card.role = "button";
+                    card.tabIndex = 0;
                     card.dataset.name = project.name.toLowerCase();
 
                     const imgPath = project.banner_url || fallbackGif;
@@ -468,14 +470,23 @@
                     const snippet = words.slice(0, 5).join(" ") + "...";
 
                     card.innerHTML = `
-                <img src="${imgPath}" alt="${project.name}" onerror="this.onerror=null; this.src='${fallbackGif}';" />
-                <h3 class="uk-card-title">${project.name}</h3>
-                <p>${snippet}</p>
-            `;
+                        <img src="${imgPath}" alt="${project.name}" onerror="this.onerror=null; this.src='${fallbackGif}';" />
+                        <h3 class="uk-card-title">${project.name}</h3>
+                        <p>${snippet}</p>
+                    `;
+                    card.addEventListener("keydown", (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            card.click();
+                        }
+                    });
+
 
                     grid.appendChild(card);
                 });
             }
+
+            let lastFocusedElement = null;
 
             async function openModal(
                 title,
@@ -484,6 +495,7 @@
                 imageUrl,
                 downloadLink,
             ) {
+                lastFocusedElement = document.activeElement;
                 document.querySelector("#m-title").textContent = title;
                 document.querySelector("#m-desc").textContent = description;
 
@@ -516,7 +528,13 @@
                     console.error(err);
                 }
 
-                UIkit.modal(document.querySelector("#compModal")).show();
+                const modal = UIkit.modal(document.querySelector("#compModal"))
+
+                modal.$el.addEventListener('hidden', () => {
+                    if (lastFocusedElement) lastFocusedElement.focus();
+                });
+                
+                modal.show();
             }
 
             // Search blocks
@@ -584,7 +602,7 @@
                     animateIcon();
                 }
             }
-
+            
             // starts the obecxts
             window.addEventListener("load", function () {
                 initFloatingIcons();
