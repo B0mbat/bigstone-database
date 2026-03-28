@@ -301,7 +301,7 @@
 
             .download-btn {
                 position: absolute;
-                margin-top:-20px;
+                margin-top: -20px;
                 margin-left: 240px;
                 background: #008694;
                 color: #fff;
@@ -441,7 +441,14 @@
                     let ignore_focus = false;
 
                     document.addEventListener("keydown", (e) => {
-                        if (!["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"].includes(e.key)) {
+                        if (
+                            ![
+                                "ArrowRight",
+                                "ArrowLeft",
+                                "ArrowUp",
+                                "ArrowDown",
+                            ].includes(e.key)
+                        ) {
                             return;
                         }
                         if (!cards.length) return;
@@ -450,7 +457,8 @@
                         // Detect number of columns dynamically
                         const grid = document.querySelector("#grid");
                         const gridStyle = window.getComputedStyle(grid);
-                        const columns = gridStyle.gridTemplateColumns.split(" ").length;
+                        const columns =
+                            gridStyle.gridTemplateColumns.split(" ").length;
 
                         if (e.key === "ArrowRight") {
                             currentIndex = (currentIndex + 1) % len;
@@ -478,7 +486,8 @@
                             } else if (currentIndex - columns <= 0) {
                                 currentIndex = 0;
                             } else {
-                                currentIndex = (currentIndex - columns + len) % len;
+                                currentIndex =
+                                    (currentIndex - columns + len) % len;
                             }
                         }
 
@@ -495,7 +504,7 @@
                             target.scrollIntoView({
                                 behavior: "smooth",
                                 block: "center",
-                                inline: "center"
+                                inline: "center",
                             });
                         }
                         ignore_focus = false;
@@ -559,7 +568,6 @@
                         }
                     });
 
-
                     grid.appendChild(card);
                 });
             }
@@ -616,10 +624,10 @@
                                             <button onclick="popup();navigator.clipboard.writeText('${c.id}')" style="cursor: pointer;margin-right:8px;font-weight:bold;">Copy ID</button>
                                             <a href="https://bigstone-api.justparrot.workers.dev/components/${c.id}" target="_blank" class="download-btn" id="m-download">Download</a>
                                         </div>`;
-                                        
                         }
                     } else {
-                        listHtml = "<p style='font-weight:bold; color:#AA4A44;'>Nothing to see here &#128064;</p>";
+                        listHtml =
+                            "<p style='font-weight:bold; color:#AA4A44;'>Nothing to see here &#128064;</p>";
                     }
 
                     document.querySelector("#m-desc").innerHTML +=
@@ -698,7 +706,7 @@
                     animateIcon();
                 }
             }
-            
+
             // starts the obecxts
             window.addEventListener("load", function () {
                 initFloatingIcons();
