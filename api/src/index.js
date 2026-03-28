@@ -6,11 +6,7 @@ import { handleContributors } from './routes/contributors.js';
 
 export default {
 	async fetch(request, env) {
-		const allowedOrigins = [
-			'https://formalparrot.github.io',
-			'http://localhost:8787', // change up to your needs
-			'http://127.0.0.1:8787',
-		];
+		const allowedOrigins = ['https://formalparrot.github.io', 'http://localhost:8787', 'http://127.0.0.1:8787'];
 
 		const origin = request.headers.get('Origin');
 

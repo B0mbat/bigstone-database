@@ -26,7 +26,7 @@ export async function handleComponents(request, env, corsHeaders) {
 			});
 		}
 
-		const { project_id, name, desc } = body;
+		const { project_id, name, desc, ports } = body;
 		if (!project_id || !name) {
 			return new Response(JSON.stringify({ error: 'Missing required fields' }), {
 				status: 400,
@@ -53,8 +53,8 @@ export async function handleComponents(request, env, corsHeaders) {
 			}
 
 			// Insert new component
-			const result = await env.DB.prepare('INSERT INTO components (project_id, name, "desc", owner_id) VALUES (?, ?, ?, ?)')
-				.bind(project_id, name, desc || null, user.id)
+			const result = await env.DB.prepare('INSERT INTO components (project_id, name, "desc", owner_id, ports) VALUES (?, ?, ?, ?, ?)')
+				.bind(project_id, name, desc || null, user.id, JSON.stringify(ports))
 				.run();
 
 			const row = await env.DB.prepare('SELECT id FROM components WHERE rowid = ?').bind(result.meta.last_row_id).first();
@@ -72,18 +72,39 @@ export async function handleComponents(request, env, corsHeaders) {
 	}
 
 	// GET
-	if (request.method === 'GET') {
+	if (request.method === 'GET' && path.endsWith('/components')) {
 		const result = await env.DB.prepare('SELECT * FROM components').all();
-
-		return new Response(JSON.stringify(result.results), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+		const components = result.results.map((c) => ({ ...c, ports: JSON.parse(c.ports) }));
+		return new Response(JSON.stringify(components), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
 	}
 
 	if (request.method === 'GET' && path.startsWith('/components/')) {
 		const id = path.split('/').pop();
 
-		const result = await env.DB.prepare('SELECT * FROM components WHERE id = ?').bind(id).first();
+		const component = await env.DB.prepare('SELECT * FROM components WHERE id = ?').bind(id).first();
 
-		return new Response(JSON.stringify(result), { headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+		if (!component) {
+			return new Response(JSON.stringify({ error: 'Component not found' }), {
+				status: 404,
+				headers: { 'Content-Type': 'application/json', ...corsHeaders },
+			});
+		}
+
+		// string => array
+		let ports = [];
+		if (component.ports) {
+			try {
+				ports = JSON.parse(component.ports);
+			} catch {
+				ports = [];
+			}
+		}
+
+		const response = { ...component, ports };
+
+		return new Response(JSON.stringify(response), {
+			headers: { 'Content-Type': 'application/json', ...corsHeaders },
+		});
 	}
 
 	// DELETE
