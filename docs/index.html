@@ -285,7 +285,7 @@
                 margin: 0 auto 32px auto;
             }
 
-            .modal-img {
+            .project-img {
                 width: 215px;
                 height: 215px;
                 object-fit: contain;
@@ -381,14 +381,14 @@
                 class="uk-input"
                 type="text"
                 id="search"
-                placeholder="Search components..."
+                placeholder="Search projects..."
                 onkeyup="searchItems()"
             />
         </header>
 
         <div class="grid" id="grid"></div>
 
-        <div id="compModal" uk-modal>
+        <div id="projectModal" uk-modal>
             <div class="uk-modal-dialog custom-modal-dialog">
                 <button
                     class="uk-modal-close-default custom-close-btn"
@@ -404,14 +404,14 @@
                     <div></div>
                     <div></div>
                     <div></div>
-                    <figure><img id="m-img" src="" class="modal-img" /></figure>
+                    <figure><img id="p-img" src="" class="project-img" /></figure>
                 </div>
                 <div class="modal-body-content">
-                    <h2 id="m-title"></h2>
+                    <h2 id="p-title"></h2>
                     <h4>Description</h4>
-                    <p id="m-desc"></p>
+                    <p id="p-desc"></p>
                     <h4>Owner & Contributors</h4>
-                    <div id="m-tags" class="tag-container"></div>
+                    <div id="p-tags" class="tag-container"></div>
                 </div>
                 <!--Download Button Removed for now-->
             </div>
@@ -543,7 +543,7 @@
                     const downloadUrl = `https://bigstone-api.justparrot.workers.dev/projects/${project.id}/download`;
 
                     card.addEventListener("click", function () {
-                        openModal(
+                        openProject(
                             project.id,
                             project.name,
                             project.desc,
@@ -574,7 +574,7 @@
 
             let lastFocusedElement = null;
 
-            async function openModal(
+            async function openProject(
                 projectId,
                 title,
                 description,
@@ -583,12 +583,12 @@
                 downloadLink,
             ) {
                 lastFocusedElement = document.activeElement;
-                document.querySelector("#m-title").textContent = title;
-                document.querySelector("#m-desc").textContent = description;
+                document.querySelector("#p-title").textContent = title;
+                document.querySelector("#p-desc").textContent = description;
 
-                const modalImg = document.querySelector("#m-img");
-                modalImg.src = imageUrl;
-                modalImg.onerror = function () {
+                const projectImg = document.querySelector("#p-img");
+                projectImg.src = imageUrl;
+                projectImg.onerror = function () {
                     this.onerror = null;
                     this.src = fallbackGif;
                 };
@@ -596,7 +596,7 @@
                 // document.querySelector("#m-download").href = downloadLink;
                 // download button
 
-                const tagsContainer = document.querySelector("#m-tags");
+                const tagsContainer = document.querySelector("#p-tags");
 
                 // temp. placeholder
                 tagsContainer.innerHTML = `<span class="tag">Loading...</span>`;
@@ -617,17 +617,17 @@
                 }
 
                 try {
-                    let compRes = await fetch(
+                    let projectRes = await fetch(
                         `https://bigstone-api.justparrot.workers.dev/projects/${projectId}/components`,
                     );
 
-                    if (compRes.ok) {
-                        let compData = await compRes.json();
+                    if (projectRes.ok) {
+                        let projectData = await projectRes.json();
                         let listHtml = "";
 
-                        if (compData && compData.length > 0) {
-                            for (let i = 0; i < compData.length; i++) {
-                                let c = compData[i];
+                        if (projectData && projectData.length > 0) {
+                            for (let i = 0; i < projectData.length; i++) {
+                                let c = projectData[i];
                                 listHtml += `
                                     <div style="margin-top:5px; background:#2e2e32; padding:10px; border-radius:8px;">
                                         <div style="font-size:13px; margin-bottom:3px;">${c.name}</div>
@@ -640,22 +640,22 @@
                                 "<p style='font-weight:bold; color:#AA4A44;'>Nothing to see here &#128064;</p>";
                         }
 
-                        document.querySelector("#m-desc").innerHTML +=
+                        document.querySelector("#p-desc").innerHTML +=
                             '<h4 style="margin-top:12px;">Components</h4>' +
                             listHtml;
                     } else {
                         console.error(
-                            "Component fetch failed with status:",
-                            compRes.status,
+                            "Project fetch failed with status:",
+                            projectRes.status,
                         );
                     }
                 } catch (e) {
-                    console.error("Component fetch error:", e);
-                    document.querySelector("#m-desc").innerHTML +=
+                    console.error("Project fetch error:", e);
+                    document.querySelector("#p-desc").innerHTML +=
                         '<p style="color:#AA4A44;">Failed to load components.</p>';
                 }
 
-                UIkit.modal(document.querySelector("#compModal")).show();
+                UIkit.modal(document.querySelector("#projectModal")).show();
             }
 
             // Search blocks
